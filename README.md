@@ -1,2 +1,2 @@
-# go_experience
-Some samples written on go language
+# GO lang experience
+Some samples written on go language.
