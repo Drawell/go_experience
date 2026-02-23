@@ -26,6 +26,23 @@ func LoopIf() {
 	}
 }
 
+func LoopSlice() {
+
+	arr := []int{1, 2, 3, 4}
+	for idx, value := range arr {
+		fmt.Println(idx, ":", value)
+	}
+
+	for _, value := range arr {
+		fmt.Println("only value:", value)
+	}
+
+	for idx := range make([]int, 2) {
+		fmt.Println("only index:", idx)
+	}
+
+}
+
 func SwitchCase(x int) {
 	switch {
 	case x%2 == 0:
@@ -50,6 +67,7 @@ func DeferredFunc(x int) {
 
 func main() {
 	LoopIf()
+	LoopSlice()
 	SwitchCase(6)
 	DeferredFunc(11)
 }
