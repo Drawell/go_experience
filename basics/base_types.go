@@ -105,10 +105,63 @@ func ArraysAndSlices() {
 	fmt.Println(app, "len=", len(app), "cap=", cap(app))
 }
 
+func Maps() {
+	figures := map[int]string{
+		1: "circle",
+		2: "rectangle",
+	}
+	var root = make(map[string]map[int]string)
+	root["figures"] = figures
+	root["colors"] = map[int]string{
+		255000000: "red",
+		000255000: "green",
+		000000255: "blue",
+	}
+
+	fmt.Println(root)
+
+	for key, value := range root {
+		fmt.Println(key)
+		for idx, inner := range value {
+			fmt.Printf("\t %d: %s\n", idx, inner)
+		}
+	}
+
+	var value, ok = root["colors"]
+	fmt.Println(value, ok)
+
+	delete(root, "colors")
+
+	value, ok = root["colors"]
+	fmt.Println(value, ok)
+}
+
+func CompareWith(value int) func(int) int {
+	return func(other int) int {
+		if other > value {
+			return 1
+		} else if other < value {
+			return -1
+		} else {
+			return 0
+		}
+	}
+}
+
+func Closure() {
+	a, b, c := 10, 15, 20
+	comparator := CompareWith(15)
+	fmt.Println(comparator(a))
+	fmt.Println(comparator(b))
+	fmt.Println(comparator(c))
+}
+
 func main() {
 	SimpleTypes()
 	TypeCasting()
 	Pointers()
 	Structs()
 	ArraysAndSlices()
+	Maps()
+	Closure()
 }
