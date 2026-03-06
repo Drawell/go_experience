@@ -33,10 +33,6 @@ func (r *Robot) Where() {
 	fmt.Printf("X=%d, X=%d\n", r.x, r.y)
 }
 
-func (r Robot) String() string {
-	return fmt.Sprintf("I AM %s! I MUST DESTROY CAPITALISM!", r.name)
-}
-
 func GoX(w Walkable) {
 	w.Walk(10, 0)
 }
@@ -47,12 +43,11 @@ func Walkers() {
 	barsik.Where()
 
 	var walker Walkable
-	iosif := Robot{1, 1, "IOSIF"}
-	walker = &iosif
+	wallie := Robot{1, 1, "IOSIF"}
+	walker = &wallie
 	GoX(walker)
 	walker.Walk(10, 4)
-	iosif.Where()
-	fmt.Println(iosif)
+	wallie.Where()
 }
 
 func TypeAssertion() {
@@ -83,8 +78,42 @@ func TypeSwitch() {
 	ConvertDate(1.0)
 }
 
+func (r *Robot) String() string {
+	return fmt.Sprintf("I AM %s! I MUST DESTROY CAPITALISM!", r.name)
+}
+
+type MyException struct {
+	code   int
+	detail string
+}
+
+func (r MyException) Error() string {
+	return fmt.Sprintf("ERROR %d, detail: %v", r.code, r.detail)
+}
+
+func DestroyCapitalism(r *Robot) (string, error) {
+	if r == nil {
+		return "", MyException{400, "Need some robot"}
+	} else {
+		return "DESTROYING IN PROGRESS...", nil
+	}
+}
+
+func Destroyer() {
+	iosif := Robot{1, 1, "IOSIF"}
+	fmt.Println(&iosif)
+	if v, err := DestroyCapitalism(nil); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(v)
+	}
+
+	fmt.Println(DestroyCapitalism(&iosif))
+}
+
 func main() {
 	Walkers()
 	TypeAssertion()
 	TypeSwitch()
+	Destroyer()
 }
