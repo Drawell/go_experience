@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
 
 type Walkable interface {
 	Walk(toX, toY int)
@@ -111,9 +116,73 @@ func Destroyer() {
 	fmt.Println(DestroyCapitalism(&iosif))
 }
 
+type Fib struct {
+	prev, next int
+}
+
+func (f *Fib) Read(data []byte) (int, error) {
+	data[0] = byte(f.prev)
+	data[1] = byte(f.prev >> 8)
+	data[2] = byte(f.prev >> 16)
+	data[3] = byte(f.prev >> 24)
+
+	f.prev, f.next = f.next, f.prev+f.next
+	return 4, nil
+}
+
+func BytesToInt(data []byte) int {
+	res := 0
+	res += int(data[0])
+	res += int(data[1]) << 8
+	res += int(data[2]) << 16
+	res += int(data[3]) << 24
+	return res
+}
+
+func FibRead() {
+	r := &Fib{1, 1}
+
+	buff := make([]byte, 4)
+	for r.prev < 30 {
+		_, ok := r.Read(buff)
+		if ok == nil {
+			fmt.Println(BytesToInt(buff))
+		}
+	}
+}
+
+type rot13Reader struct {
+	r io.Reader
+}
+
+func (r *rot13Reader) Read(data []byte) (int, error) {
+	n, _ := r.r.Read(data)
+	for i := 0; i < n; i++ {
+		var offset byte = 0
+		if data[i] >= byte('a') && data[i] <= byte('z') {
+			offset = byte('a')
+		} else if data[i] >= byte('A') && data[i] <= byte('Z') {
+			offset = byte('A')
+		} else {
+			continue
+		}
+
+		data[i] = offset + (data[i]-offset+13)%26
+	}
+	return n, nil
+}
+
+func Rot13() {
+	s := strings.NewReader("Lbh penpxrq gur pbqr!")
+	r := rot13Reader{s}
+	io.Copy(os.Stdout, &r)
+}
+
 func main() {
 	Walkers()
 	TypeAssertion()
 	TypeSwitch()
 	Destroyer()
+	FibRead()
+	Rot13()
 }
