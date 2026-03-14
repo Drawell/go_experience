@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -119,9 +120,39 @@ func ChatTest() {
 
 }
 
+func Write(counter *int) {
+	cur := *counter
+	time.Sleep(10 * time.Millisecond)
+	*counter = cur + 1
+}
+
+func SafeWrite(counter *int, loc *sync.Mutex) int {
+	loc.Lock()
+	cur := *counter
+	time.Sleep(10 * time.Millisecond)
+	*counter = cur + 1
+	defer loc.Unlock()
+	return *counter
+}
+
+func LockTest() {
+	counter1 := 0
+	counter2 := 0
+	loc := &sync.Mutex{}
+	for range 10 {
+		go Write(&counter1)
+		go SafeWrite(&counter2, loc)
+	}
+
+	time.Sleep(200 * time.Millisecond)
+	fmt.Println(counter1)
+	fmt.Println(counter2)
+}
+
 func main() {
 	SimpleChan()
 	BuffChan()
 	ZipTest()
 	ChatTest()
+	LockTest()
 }
